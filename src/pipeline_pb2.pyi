@@ -86,18 +86,20 @@ class ObjectDetectionReply(_message.Message):
     def __init__(self, masks: _Optional[_Iterable[_Union[Mask, _Mapping]]] = ..., regions: _Optional[_Iterable[_Union[Region, _Mapping]]] = ..., label: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class PoseDetectionRequest(_message.Message):
-    __slots__ = ["api_key", "prompt", "rgb", "depth", "intrinsics"]
+    __slots__ = ["api_key", "prompt", "rgb", "depth", "intrinsics", "box_threshold"]
     API_KEY_FIELD_NUMBER: _ClassVar[int]
     PROMPT_FIELD_NUMBER: _ClassVar[int]
     RGB_FIELD_NUMBER: _ClassVar[int]
     DEPTH_FIELD_NUMBER: _ClassVar[int]
     INTRINSICS_FIELD_NUMBER: _ClassVar[int]
+    BOX_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
     api_key: str
     prompt: str
     rgb: Image
     depth: Image
     intrinsics: _containers.RepeatedScalarFieldContainer[float]
-    def __init__(self, api_key: _Optional[str] = ..., prompt: _Optional[str] = ..., rgb: _Optional[_Union[Image, _Mapping]] = ..., depth: _Optional[_Union[Image, _Mapping]] = ..., intrinsics: _Optional[_Iterable[float]] = ...) -> None: ...
+    box_threshold: float
+    def __init__(self, api_key: _Optional[str] = ..., prompt: _Optional[str] = ..., rgb: _Optional[_Union[Image, _Mapping]] = ..., depth: _Optional[_Union[Image, _Mapping]] = ..., intrinsics: _Optional[_Iterable[float]] = ..., box_threshold: _Optional[float] = ...) -> None: ...
 
 class PoseDetectionReply(_message.Message):
     __slots__ = ["masks", "regions", "label", "pose"]

@@ -66,6 +66,7 @@ message PingRequest {
     Image rgb = 3;
     Image depth = 4;
     repeated float intrinsics = 5;
+    float box_threshold = 6;
   }
   
   // Reply message for pose detection

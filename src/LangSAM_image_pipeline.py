@@ -61,7 +61,7 @@ class LangSAM_Service(pipeline_pb2_grpc.ImageModelPipelineServicer):
             rgb = Image.open(rgb_rawdata)
             depth = Image.open(depth_rawdata)
             
-            masks, boxes, phrases, logits = self.model.predict(rgb, request.prompt)
+            masks, boxes, phrases, logits = self.model.predict(rgb, request.prompt, box_threshold=request.box_threshold)
 
             masks_pb = []
             regions_pb = []
