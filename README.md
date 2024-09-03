@@ -10,7 +10,8 @@ The pose detection and segmentation is done using lang-segment-anything library.
 The pose estimation method is a simple plane fitting done using RANSAC. The orientation is estimated by finding the dominant axis using Principle Component Decomposition.
 
 For performance and consitency the model files and other downloaded models is placed in cache.tar.gz, unpack this tarball to cache/ before trying to build the docker image.
-(Download link for the cache file is coming soon...)
+
+[Download Cache file](https://drive.google.com/file/d/1NM0yjs9t3NHQwM4PWIqYWqlnIS23OM-3/view?usp=drive_link)
 
 ```
 tar xvzf cache.tar.gz
