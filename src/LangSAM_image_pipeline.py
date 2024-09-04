@@ -76,8 +76,8 @@ class LangSAM_Service(pipeline_pb2_grpc.ImageModelPipelineServicer):
                 regions_pb.append(box)
 
                 pose = estimate_pose(cpu_mask, depth, intrinsics)
-                pose = pipeline_pb2.Pose(position=pose.position, orientation=pose.quaternion)
-                poses_pb.append(pose)
+                pose_pb = [pose.position[0], pose.position[1], pose.position[2], pose.euler[0], pose.euler[1], pose.euler[2]]
+                poses_pb.append(pose_pb)
                 
             return pipeline_pb2.PoseDetectionReply(masks=masks_pb, regions=regions_pb, label=[request.prompt]*len(masks), pose=poses_pb)
 

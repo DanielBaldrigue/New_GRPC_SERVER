@@ -114,7 +114,7 @@ def get_pose(plane, centroid, dominant_axis):
     
     # We get the orientation of the plane
     z = plane[0:3]
-    z = -z / np.linalg.norm(z)
+    z = z / np.linalg.norm(z)
     x = dominant_axis
     x = x / np.linalg.norm(x)
     y = np.cross(z, x)

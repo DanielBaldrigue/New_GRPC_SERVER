@@ -33,12 +33,6 @@ message PingRequest {
     bytes image_data = 2;
   }
   
-  // Pose-related messages
-  message Pose {
-    repeated float position = 1;
-    repeated float orientation = 2;
-  }
-  
   // Request and reply messages for object detection and pose detection
   message PromptObjectDetectionRequest {
     string api_key = 1;
@@ -74,7 +68,7 @@ message PingRequest {
     repeated Mask masks = 1;
     repeated Region regions = 2;
     repeated string label = 3;
-    repeated Pose pose = 4;
+    repeated float pose = 4;
   }
 
 // Service definition
