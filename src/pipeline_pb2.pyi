@@ -49,6 +49,26 @@ class Image(_message.Message):
     image_data: bytes
     def __init__(self, image_format: _Optional[str] = ..., image_data: _Optional[bytes] = ...) -> None: ...
 
+class Pose(_message.Message):
+    __slots__ = ["position", "orientation"]
+    POSITION_FIELD_NUMBER: _ClassVar[int]
+    ORIENTATION_FIELD_NUMBER: _ClassVar[int]
+    position: _containers.RepeatedScalarFieldContainer[float]
+    orientation: _containers.RepeatedScalarFieldContainer[float]
+    def __init__(self, position: _Optional[_Iterable[float]] = ..., orientation: _Optional[_Iterable[float]] = ...) -> None: ...
+
+class XYZ(_message.Message):
+    __slots__ = ["xyz"]
+    XYZ_FIELD_NUMBER: _ClassVar[int]
+    xyz: _containers.RepeatedScalarFieldContainer[float]
+    def __init__(self, xyz: _Optional[_Iterable[float]] = ...) -> None: ...
+
+class Points(_message.Message):
+    __slots__ = ["points"]
+    POINTS_FIELD_NUMBER: _ClassVar[int]
+    points: _containers.RepeatedCompositeFieldContainer[XYZ]
+    def __init__(self, points: _Optional[_Iterable[_Union[XYZ, _Mapping]]] = ...) -> None: ...
+
 class PromptObjectDetectionRequest(_message.Message):
     __slots__ = ["api_key", "prompt", "image"]
     API_KEY_FIELD_NUMBER: _ClassVar[int]
@@ -77,6 +97,20 @@ class ObjectDetectionReply(_message.Message):
     label: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, masks: _Optional[_Iterable[_Union[Mask, _Mapping]]] = ..., regions: _Optional[_Iterable[_Union[Region, _Mapping]]] = ..., label: _Optional[_Iterable[str]] = ...) -> None: ...
 
+class PointPoseDetectionRequest(_message.Message):
+    __slots__ = ["api_key", "prompt", "rgb", "points", "box_threshold"]
+    API_KEY_FIELD_NUMBER: _ClassVar[int]
+    PROMPT_FIELD_NUMBER: _ClassVar[int]
+    RGB_FIELD_NUMBER: _ClassVar[int]
+    POINTS_FIELD_NUMBER: _ClassVar[int]
+    BOX_THRESHOLD_FIELD_NUMBER: _ClassVar[int]
+    api_key: str
+    prompt: str
+    rgb: Image
+    points: Points
+    box_threshold: float
+    def __init__(self, api_key: _Optional[str] = ..., prompt: _Optional[str] = ..., rgb: _Optional[_Union[Image, _Mapping]] = ..., points: _Optional[_Union[Points, _Mapping]] = ..., box_threshold: _Optional[float] = ...) -> None: ...
+
 class PoseDetectionRequest(_message.Message):
     __slots__ = ["api_key", "prompt", "rgb", "depth", "intrinsics", "box_threshold"]
     API_KEY_FIELD_NUMBER: _ClassVar[int]
@@ -102,5 +136,5 @@ class PoseDetectionReply(_message.Message):
     masks: _containers.RepeatedCompositeFieldContainer[Mask]
     regions: _containers.RepeatedCompositeFieldContainer[Region]
     label: _containers.RepeatedScalarFieldContainer[str]
-    pose: _containers.RepeatedScalarFieldContainer[float]
-    def __init__(self, masks: _Optional[_Iterable[_Union[Mask, _Mapping]]] = ..., regions: _Optional[_Iterable[_Union[Region, _Mapping]]] = ..., label: _Optional[_Iterable[str]] = ..., pose: _Optional[_Iterable[float]] = ...) -> None: ...
+    pose: _containers.RepeatedCompositeFieldContainer[Pose]
+    def __init__(self, masks: _Optional[_Iterable[_Union[Mask, _Mapping]]] = ..., regions: _Optional[_Iterable[_Union[Region, _Mapping]]] = ..., label: _Optional[_Iterable[str]] = ..., pose: _Optional[_Iterable[_Union[Pose, _Mapping]]] = ...) -> None: ...

@@ -33,6 +33,24 @@ message PingRequest {
     bytes image_data = 2;
   }
   
+  // XYZ-related messages
+  message Point {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+  }
+
+  // PointCloud-related messages
+  message Points {
+    repeated Point point = 1;
+  }
+
+  // Pose-related messages
+  message Pose {
+    repeated float position = 1;
+    repeated float orientation = 2;
+  }
+  
   // Request and reply messages for object detection and pose detection
   message PromptObjectDetectionRequest {
     string api_key = 1;
@@ -52,7 +70,7 @@ message PingRequest {
     repeated Region regions = 2;
     repeated string label = 3;
   }
-  
+
   // Request message for pose detection
   message PoseDetectionRequest {
     string api_key = 1;
@@ -63,12 +81,21 @@ message PingRequest {
     float box_threshold = 6;
   }
   
+  // Request message for pose detection using point cloud
+  message PointPoseDetectionRequest {
+    string api_key = 1;
+    string prompt = 2;
+    Image rgb = 3;
+    Points points = 4;
+    float box_threshold = 5;
+  }
+  
   // Reply message for pose detection
   message PoseDetectionReply {
     repeated Mask masks = 1;
     repeated Region regions = 2;
     repeated string label = 3;
-    repeated float pose = 4;
+    repeated Pose pose = 4;
   }
 
 // Service definition
@@ -77,4 +104,5 @@ service ImageModelPipeline {
     rpc PromptObjectDetection(PromptObjectDetectionRequest) returns (ObjectDetectionReply) {}
     rpc ObjectDetection(ObjectDetectionRequest) returns (ObjectDetectionReply) {}
     rpc PoseDetection(PoseDetectionRequest) returns (PoseDetectionReply) {}
+    rpc PointPoseDetection(PointPoseDetectionRequest) returns (PoseDetectionReply) {}
 }

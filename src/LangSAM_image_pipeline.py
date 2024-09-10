@@ -12,10 +12,11 @@ import threading
 import os
 
 from pose_estimator import POSE, estimate_pose
+import torch
 
 class LangSAM_Service(pipeline_pb2_grpc.ImageModelPipelineServicer):
-    def __init__(self, api_keys):
-        self.model = LangSAM(sam_type="vit_l")
+    def __init__(self, api_keys, sam_model="vit_l"):
+        self.model = LangSAM(sam_type=sam_model)
         self.api_keys = api_keys
         self.lock = threading.Lock()
         pass
@@ -59,7 +60,9 @@ class LangSAM_Service(pipeline_pb2_grpc.ImageModelPipelineServicer):
         intrinsics = np.array(request.intrinsics).reshape(3,3)
         with self.lock:
             rgb = Image.open(rgb_rawdata)
-            depth = Image.open(depth_rawdata)
+            # We decode the depth image as a 16-bit image
+            depth = Image.open(depth_rawdata).convert("I;16")
+            depth = np.array(depth).astype(np.float32) / 1000.0
             
             masks, boxes, phrases, logits = self.model.predict(rgb, request.prompt, box_threshold=request.box_threshold)
 
@@ -76,17 +79,21 @@ class LangSAM_Service(pipeline_pb2_grpc.ImageModelPipelineServicer):
                 regions_pb.append(box)
 
                 pose = estimate_pose(cpu_mask, depth, intrinsics)
-                pose_pb = [pose.position[0], pose.position[1], pose.position[2], pose.euler[0], pose.euler[1], pose.euler[2]]
+                pose_pb = pipeline_pb2.Pose(position=pose.position, orientation=pose.euler)
                 poses_pb.append(pose_pb)
-                
+
+            torch.cuda.empty_cache()
+
             return pipeline_pb2.PoseDetectionReply(masks=masks_pb, regions=regions_pb, label=[request.prompt]*len(masks), pose=poses_pb)
 
 
 def serve():
     port = os.environ.get("GRPC_PORT", "50051")
     api_keys = os.environ.get("API_KEYS", "test")
+    sam_model = os.environ.get("SAM_MODEL", "vit_l")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    pipeline_pb2_grpc.add_ImageModelPipelineServicer_to_server(LangSAM_Service(api_keys=set(api_keys.split(","))), server)
+    service = LangSAM_Service(api_keys=set(api_keys.split(",")), sam_model=sam_model)
+    pipeline_pb2_grpc.add_ImageModelPipelineServicer_to_server(service, server)
     server.add_insecure_port("[::]:" + port)
     server.start()
     

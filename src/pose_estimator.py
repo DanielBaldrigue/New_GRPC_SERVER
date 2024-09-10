@@ -128,10 +128,13 @@ def get_pose(plane, centroid, dominant_axis):
     
     return pose
 
-def estimate_pose(mask, depth, K):
+def estimate_pose(mask, depth, K, pointcloud=None):
 
     # We get the caps segmented point clouds
-    cap_segment, _ = depth2pc(depth*mask, K)
+    if pointcloud is None:
+        cap_segment, _ = depth2pc(depth*mask, K)
+    else:
+        raise NotImplementedError('Point cloud input not implemented yet')
 
     # We get the cap planes and centroids
     centroid, plane = plane_from_points(cap_segment, plane_threshold=0.01, min_points=40)
