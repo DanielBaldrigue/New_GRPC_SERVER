@@ -1,7 +1,7 @@
 from typing import Optional
 import grpc
 from google.protobuf.internal import containers as _containers
-from val.smart_camera_drivers.lsn import pipeline_pb2, pipeline_pb2_grpc
+import pipeline_pb2, pipeline_pb2_grpc
 import numpy as np
 import cv2 as cv
 
