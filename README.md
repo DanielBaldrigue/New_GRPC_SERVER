@@ -18,3 +18,16 @@ tar xvzf cache.tar.gz
 ```
 
 This starts a GRPC based service that remotely expects image files to be sent and it will return the predicted results
+
+# Usage
+1- Extract the cache folder downloaded above to the repo directoty.
+
+2- Build the contaianer
+```bash
+dokcer build
+```
+
+3- Run the container
+```bash
+docker run --rm --gpus all --net=host -it langsam_service
+```
