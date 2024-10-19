@@ -14,7 +14,7 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y git make build-e
 RUN apt-get install -y libgl1 libgl1-mesa-glx libglib2.0-0
 
 RUN pip install -U pip
-RUN pip install -U git+https://github.com/luca-medeiros/lang-segment-anything.git
+RUN pip install -U git+https://github.com/luca-medeiros/lang-segment-anything.git@05c386ee95b26a8ec8398bebddf70ffb8ddd3faf
 RUN pip install grpcio protobuf pyransac3d transformations scikit-learn
 
 RUN mkdir /app
