@@ -21,5 +21,5 @@ docker build -t pose_estimation:latest .
 
 2- Deploy the container
 ```bash
-docker run --rm --gpus all --net=host -it pose_estimation:latest --name pose_estimation
+docker run --gpus all --net=host -d --name pose_estimation pose_estimation:latest
 ```

@@ -1,1 +1,1 @@
-docker run --rm --gpus all --net=host -it langsam_service --name pose_estimation
+docker run --gpus all --net=host -d --name pose_estimation pose_estimation:latest
