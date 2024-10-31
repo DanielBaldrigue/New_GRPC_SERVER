@@ -19,7 +19,16 @@ This starts a GRPC based service that remotely expects image files to be sent an
 docker build -t pose_estimation:latest .
 ```
 
-2- Deploy the container
+2- Create and deploy the container
 ```bash
 docker run --gpus all --net=host -d --name pose_estimation pose_estimation:latest
+```
+
+3- The container can be started/stopped on demand using
+```bash
+docker start pose_estimation
+```
+or
+```bash
+docker stop pose_estimation
 ```
