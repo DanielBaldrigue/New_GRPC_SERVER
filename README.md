@@ -20,14 +20,14 @@ tar xvzf cache.tar.gz
 This starts a GRPC based service that remotely expects image files to be sent and it will return the predicted results
 
 # Usage
-1- Extract the cache folder downloaded above to the repo directoty.
+1- Extract the cache folder downloaded above to the repo directory.
 
-2- Build the contaianer
+2- Build the Image
 ```bash
-dokcer build
+docker build -t pose_estimation:latest .
 ```
 
-3- Run the container
+3- Deploy the container
 ```bash
-docker run --rm --gpus all --net=host -it langsam_service
+docker run --rm --gpus all --net=host -it pose_estimation:latest --name pose_estimation
 ```
