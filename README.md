@@ -32,3 +32,22 @@ or
 ```bash
 docker stop pose_estimation
 ```
+
+# API Implementation
+Copy client.py, pipeline_pb2_grpc.py, pipeline_pb2.py and pipeline_pb2.pyi into your client side code.
+```python
+    from client import MLDetector
+
+    detector = MLDetector("localhost:50051")  # change localhost with ip_address if running the container on separate machine
+
+    # For segmentation
+    masks, boxes, scores, labels = detector.detect(rgb_image, text_prompt)
+
+    # For pose-estimation
+    pose, masks, boxes, scores, labels = detector.detect_pose(
+        rgb_image,
+        depth_image,
+        camera_intrinsics, # 3x3 camera matrix
+        text_prompt,
+        Confidence_Threshold)
+```

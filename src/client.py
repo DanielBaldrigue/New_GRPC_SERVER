@@ -33,15 +33,22 @@ class MLDetector:
         if not success:
             raise Exception("RGB image could not be encoded")
 
-        predictions = self.detect_raw(prompt, pipeline_pb2.Image(image_format="jpg", image_data=bytes(rgb_rawdata)))
+        self.predictions = self.detect_raw(prompt, pipeline_pb2.Image(image_format="jpg", image_data=bytes(rgb_rawdata)))
 
-        if len(predictions.masks) == 0:
+        if len(self.predictions.masks) == 0:
             return None
         
         masks = []
-        for mask in predictions.masks:
-            masks.append(np.unpackbits(np.frombuffer(mask.packedbits, dtype=np.uint8), count=mask.w*mask.h).reshape(mask.h, mask.w))
-        return masks
+        boxes = []
+        scores = []
+        for i in range(len(self.predictions.masks)):
+                mask = self.predictions.masks[i]
+                box = self.predictions.regions[i]
+                masks.append(np.unpackbits(np.frombuffer(mask.packedbits, dtype=np.uint8), count=mask.w*mask.h).reshape(mask.h, mask.w))
+                boxes.append([box.x, box.y, box.w, box.h])
+                scores.append(mask.score)
+
+        return masks, boxes, scores, self.predictions.label
 
     def detect_pose(self, rgb_image, depth_image, intrinsics, prompt="object", box_threshold=0.3):
         """
