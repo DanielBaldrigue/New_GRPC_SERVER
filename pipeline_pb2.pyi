@@ -49,14 +49,6 @@ class Image(_message.Message):
     image_data: bytes
     def __init__(self, image_format: _Optional[str] = ..., image_data: _Optional[bytes] = ...) -> None: ...
 
-class Pose(_message.Message):
-    __slots__ = ["position", "orientation"]
-    POSITION_FIELD_NUMBER: _ClassVar[int]
-    ORIENTATION_FIELD_NUMBER: _ClassVar[int]
-    position: _containers.RepeatedScalarFieldContainer[float]
-    orientation: _containers.RepeatedScalarFieldContainer[float]
-    def __init__(self, position: _Optional[_Iterable[float]] = ..., orientation: _Optional[_Iterable[float]] = ...) -> None: ...
-
 class PromptObjectDetectionRequest(_message.Message):
     __slots__ = ["api_key", "prompt", "image"]
     API_KEY_FIELD_NUMBER: _ClassVar[int]
