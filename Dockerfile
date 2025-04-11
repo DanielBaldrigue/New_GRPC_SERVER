@@ -1,4 +1,6 @@
 FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+FROM python:3.11-slim
+
 
 ARG USE_CUDA=0
 # Titan V
