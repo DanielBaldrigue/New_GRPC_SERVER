@@ -31,61 +31,26 @@ class LangSAM_Service(pipeline_pb2_grpc.ImageModelPipelineServicer):
             return pipeline_pb2.ObjectDetectionReply()
 
         rawdata = BytesIO(request.image.image_data)
+        prompt = request.prompt if request.HasField("prompt") else ""
+        box_threshold = request.box_threshold if request.HasField("box_threshold") else 0.25
+        text_threshold = request.text_threshold if request.HasField("text_threshold") else 0.25
         with self.lock:
             img = Image.open(rawdata)
             
-            masks, boxes, phrases, logits = self.model.predict(img, request.prompt)
+            masks, boxes, label_class, scores = self.model.predict(images_pil = img, texts_prompt = prompt, box_threshold = box_threshold, text_threshold = text_threshold)
 
             masks_pb = []
             regions_pb = []
             for i in range(len(masks)):
                 cpu_mask = masks[i].cpu().numpy()
-                mask = pipeline_pb2.Mask(w = cpu_mask.shape[1], h=cpu_mask.shape[0], score=logits[i], packedbits=np.packbits(cpu_mask.flatten()).tobytes())
+                mask = pipeline_pb2.Mask(w = cpu_mask.shape[1], h=cpu_mask.shape[0], score=scores[i], packedbits=np.packbits(cpu_mask.flatten()).tobytes())
                 masks_pb.append(mask)
 
                 cpu_box = boxes[i].cpu()
                 box = pipeline_pb2.Region(x=round(cpu_box[0].item()),y=round(cpu_box[1].item()),w=round((cpu_box[2]-cpu_box[0]).item()),h=round((cpu_box[3]-cpu_box[1]).item()))
                 regions_pb.append(box)
                 
-            return pipeline_pb2.ObjectDetectionReply(masks=masks_pb, regions=regions_pb, label=[request.prompt]*len(masks))
-
-    def PoseDetection(self, request: pipeline_pb2.PoseDetectionRequest, context)->pipeline_pb2.PoseDetectionReply:
-        if request.api_key not in self.api_keys:
-            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
-            context.set_details("Invalid api key")
-            return pipeline_pb2.PoseDetectionReply()
-
-        rgb_rawdata = BytesIO(request.rgb.image_data)
-        depth_rawdata = BytesIO(request.depth.image_data)
-        intrinsics = np.array(request.intrinsics).reshape(3,3)
-        with self.lock:
-            rgb = Image.open(rgb_rawdata)
-            # We decode the depth image as a 16-bit image
-            depth = Image.open(depth_rawdata).convert("I;16")
-            depth = np.array(depth).astype(np.float32) / 1000.0
-            
-            masks, boxes, phrases, logits = self.model.predict(rgb, request.prompt, box_threshold=request.box_threshold)
-
-            masks_pb = []
-            regions_pb = []
-            poses_pb = []
-            for i in range(len(masks)):
-                cpu_mask = masks[i].cpu().numpy()
-                mask = pipeline_pb2.Mask(w = cpu_mask.shape[1], h=cpu_mask.shape[0], score=logits[i], packedbits=np.packbits(cpu_mask.flatten()).tobytes())
-                masks_pb.append(mask)
-
-                cpu_box = boxes[i].cpu()
-                box = pipeline_pb2.Region(x=round(cpu_box[0].item()),y=round(cpu_box[1].item()),w=round((cpu_box[2]-cpu_box[0]).item()),h=round((cpu_box[3]-cpu_box[1]).item()))
-                regions_pb.append(box)
-
-                pose = estimate_pose(cpu_mask, depth, intrinsics)
-                pose_pb = pipeline_pb2.Pose(position=pose.position, orientation=pose.euler)
-                poses_pb.append(pose_pb)
-
-            torch.cuda.empty_cache()
-
-            return pipeline_pb2.PoseDetectionReply(masks=masks_pb, regions=regions_pb, label=[request.prompt]*len(masks), pose=poses_pb)
-
+            return pipeline_pb2.ObjectDetectionReply(masks=masks_pb, regions=regions_pb, label=[prompt]*len(masks))
 
 def serve():
     port = os.environ.get("GRPC_PORT", "50051")

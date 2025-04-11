@@ -5,6 +5,26 @@ import warnings
 
 import pipeline_pb2 as pipeline__pb2
 
+GRPC_GENERATED_VERSION = '1.71.0'
+GRPC_VERSION = grpc.__version__
+_version_not_supported = False
+
+try:
+    from grpc._utilities import first_version_is_lower
+    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
+except ImportError:
+    _version_not_supported = True
+
+if _version_not_supported:
+    raise RuntimeError(
+        f'The grpc package installed is at version {GRPC_VERSION},'
+        + f' but the generated code in pipeline_pb2_grpc.py depends on'
+        + f' grpcio>={GRPC_GENERATED_VERSION}.'
+        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
+        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
+    )
+
+
 class ImageModelPipelineStub(object):
     """Service definition
     """
@@ -25,21 +45,6 @@ class ImageModelPipelineStub(object):
                 request_serializer=pipeline__pb2.PromptObjectDetectionRequest.SerializeToString,
                 response_deserializer=pipeline__pb2.ObjectDetectionReply.FromString,
                 _registered_method=True)
-        self.ObjectDetection = channel.unary_unary(
-                '/imagepipeline.ImageModelPipeline/ObjectDetection',
-                request_serializer=pipeline__pb2.ObjectDetectionRequest.SerializeToString,
-                response_deserializer=pipeline__pb2.ObjectDetectionReply.FromString,
-                _registered_method=True)
-        self.PoseDetection = channel.unary_unary(
-                '/imagepipeline.ImageModelPipeline/PoseDetection',
-                request_serializer=pipeline__pb2.PoseDetectionRequest.SerializeToString,
-                response_deserializer=pipeline__pb2.PoseDetectionReply.FromString,
-                _registered_method=True)
-        self.PointPoseDetection = channel.unary_unary(
-                '/imagepipeline.ImageModelPipeline/PointPoseDetection',
-                request_serializer=pipeline__pb2.PointPoseDetectionRequest.SerializeToString,
-                response_deserializer=pipeline__pb2.PoseDetectionReply.FromString,
-                _registered_method=True)
 
 
 class ImageModelPipelineServicer(object):
@@ -58,24 +63,6 @@ class ImageModelPipelineServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ObjectDetection(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def PoseDetection(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def PointPoseDetection(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_ImageModelPipelineServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -88,21 +75,6 @@ def add_ImageModelPipelineServicer_to_server(servicer, server):
                     servicer.PromptObjectDetection,
                     request_deserializer=pipeline__pb2.PromptObjectDetectionRequest.FromString,
                     response_serializer=pipeline__pb2.ObjectDetectionReply.SerializeToString,
-            ),
-            'ObjectDetection': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObjectDetection,
-                    request_deserializer=pipeline__pb2.ObjectDetectionRequest.FromString,
-                    response_serializer=pipeline__pb2.ObjectDetectionReply.SerializeToString,
-            ),
-            'PoseDetection': grpc.unary_unary_rpc_method_handler(
-                    servicer.PoseDetection,
-                    request_deserializer=pipeline__pb2.PoseDetectionRequest.FromString,
-                    response_serializer=pipeline__pb2.PoseDetectionReply.SerializeToString,
-            ),
-            'PointPoseDetection': grpc.unary_unary_rpc_method_handler(
-                    servicer.PointPoseDetection,
-                    request_deserializer=pipeline__pb2.PointPoseDetectionRequest.FromString,
-                    response_serializer=pipeline__pb2.PoseDetectionReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -160,87 +132,6 @@ class ImageModelPipeline(object):
             '/imagepipeline.ImageModelPipeline/PromptObjectDetection',
             pipeline__pb2.PromptObjectDetectionRequest.SerializeToString,
             pipeline__pb2.ObjectDetectionReply.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def ObjectDetection(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/imagepipeline.ImageModelPipeline/ObjectDetection',
-            pipeline__pb2.ObjectDetectionRequest.SerializeToString,
-            pipeline__pb2.ObjectDetectionReply.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def PoseDetection(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/imagepipeline.ImageModelPipeline/PoseDetection',
-            pipeline__pb2.PoseDetectionRequest.SerializeToString,
-            pipeline__pb2.PoseDetectionReply.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def PointPoseDetection(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/imagepipeline.ImageModelPipeline/PointPoseDetection',
-            pipeline__pb2.PointPoseDetectionRequest.SerializeToString,
-            pipeline__pb2.PoseDetectionReply.FromString,
             options,
             channel_credentials,
             insecure,
